@@ -23,8 +23,29 @@
       --muted:   #9a9080;
       --r:       12px;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--cream); line-height:1.65; overflow-x:hidden; }
+    html { scroll-behavior: smooth; overflow-x:hidden; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--cream); line-height:1.65; overflow-x:hidden; max-width:100vw; }
+
+    /* ─── Global button/link clarity ─────────────────────── */
+    a, button, [role="button"],
+    .faq-q, .gallery-item, .carousel-dot, .carousel-btn,
+    .contact-chip, .nav-cta, .btn-primary, .btn-ghost,
+    .btn-admin, .btn-admin-ghost, .admin-post-item .del-btn,
+    .footer-links a, .nav-links a, .social-link { cursor:pointer; }
+
+    /* Clickable cards — tap highlight on mobile */
+    .gallery-item, .blog-card, .faq-item {
+      -webkit-tap-highlight-color: rgba(212,168,83,.12);
+    }
+
+    /* Make links that act as buttons feel pressable */
+    .btn-primary:active  { transform:scale(.97); }
+    .btn-ghost:active    { transform:scale(.97); }
+    .contact-chip:active { transform:scale(.97); }
+
+    /* Non-interactive labels — explicitly no pointer */
+    .pill, .stat, .event-badge, .section-label,
+    .blog-tag, .hero-eyebrow, .blog-meta, .cd-unit { cursor:default; }
     ::-webkit-scrollbar { width:6px; }
     ::-webkit-scrollbar-track { background:var(--bg); }
     ::-webkit-scrollbar-thumb { background:var(--gold-dk); border-radius:3px; }
@@ -66,6 +87,22 @@
     .nav-links a:hover { color:var(--cream); }
     .nav-cta { background:var(--gold); color:#000 !important; padding:8px 20px; border-radius:50px; font-weight:600 !important; transition:background .2s,transform .2s !important; }
     .nav-cta:hover { background:var(--gold-lt) !important; transform:translateY(-1px); }
+    /* Hamburger */
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; background:none; border:none; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:var(--cream); border-radius:2px; transition:transform .3s, opacity .3s; }
+    .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity:0; }
+    .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    /* Mobile nav drawer */
+    .nav-drawer {
+      display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99;
+      background:rgba(8,8,8,.97); backdrop-filter:blur(20px);
+      flex-direction:column; align-items:center; justify-content:center; gap:32px;
+    }
+    .nav-drawer.open { display:flex; }
+    .nav-drawer a { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--cream); text-decoration:none; transition:color .2s; }
+    .nav-drawer a:hover { color:var(--gold); }
+    .nav-drawer .nav-cta { font-family:'Inter',sans-serif; font-size:1rem; }
 
     /* ═══ HERO ═══════════════════════════════════════════ */
     #hero {
@@ -284,64 +321,36 @@
     .social-link { display:flex; align-items:center; gap:8px; color:var(--muted); text-decoration:none; font-size:.85rem; transition:color .2s; }
     .social-link:hover { color:var(--gold); }
 
-    /* ═══ CHESS PIECES — NETFLIX CAROUSEL ════════════════ */
-    #chess-pieces { background:var(--bg3); padding:80px 0; overflow:hidden; }
-    #chess-pieces .container { max-width:100%; padding:0; }
-    #chess-pieces .inner-header { max-width:1100px; margin:0 auto; padding:0 40px 40px; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; }
-    .carousel-wrapper { position:relative; }
-    /* Edge fade like Netflix */
-    .carousel-wrapper::before,
-    .carousel-wrapper::after {
-      content:''; position:absolute; top:0; bottom:0; width:80px; z-index:2; pointer-events:none;
-    }
-    .carousel-wrapper::before { left:0; background:linear-gradient(to right, var(--bg3), transparent); }
-    .carousel-wrapper::after  { right:0; background:linear-gradient(to left, var(--bg3), transparent); }
-    .carousel-track-outer { overflow:hidden; padding:12px 40px; }
-    .carousel-track {
-      display:flex; gap:16px;
-      transition:transform .5s cubic-bezier(.25,.46,.45,.94);
-      will-change:transform;
+    /* ═══ CHESS PIECES — BENTO GRID ══════════════════════ */
+    #chess-pieces { background:var(--bg3); }
+    .pieces-bento {
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap:16px;
     }
     .piece-card {
-      flex: 0 0 calc(100% / 3.5);
-      background:var(--bg2); border:1px solid var(--border); border-radius:16px;
-      padding:36px 28px; text-align:center;
-      transition:border-color .4s, transform .4s, box-shadow .4s;
-      cursor:default; position:relative; overflow:hidden;
+      background:var(--bg2); border:1px solid var(--border); border-radius:20px;
+      padding:32px 24px; text-align:center; position:relative; overflow:hidden;
+      transition:border-color .3s, transform .3s, box-shadow .3s;
     }
-    .piece-card::before {
+    /* Feature card — King spans 2 cols */
+    .piece-card.featured { grid-column: span 2; display:flex; align-items:center; gap:32px; text-align:left; padding:40px; }
+    .piece-card.featured .piece-symbol { font-size:6rem; margin-bottom:0; flex-shrink:0; }
+    .piece-card.featured .piece-info { flex:1; }
+    .piece-card::after {
       content:''; position:absolute; inset:0;
-      background:linear-gradient(135deg, rgba(212,168,83,.05), transparent);
+      background:radial-gradient(circle at 50% 0%, rgba(212,168,83,.06), transparent 70%);
       opacity:0; transition:opacity .4s;
     }
-    .piece-card:hover::before { opacity:1; }
-    .piece-card:hover { border-color:var(--gold); transform:scale(1.04); box-shadow:0 20px 60px rgba(0,0,0,.5); z-index:1; }
-    .piece-symbol { font-size:4rem; line-height:1; margin-bottom:16px; display:block; filter:drop-shadow(0 0 12px rgba(212,168,83,.3)); }
-    .piece-name { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--cream); margin-bottom:6px; }
-    .piece-power { font-size:.7rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
-    .piece-desc { font-size:.82rem; color:var(--muted); line-height:1.65; }
-    .piece-move { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:.75rem; color:var(--muted); }
+    .piece-card:hover::after  { opacity:1; }
+    .piece-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,.4); }
+    .piece-symbol { font-size:3.5rem; line-height:1; margin-bottom:14px; display:block; filter:drop-shadow(0 0 10px rgba(212,168,83,.25)); }
+    .piece-name { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--cream); margin-bottom:4px; }
+    .piece-power { font-size:.68rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .piece-desc { font-size:.8rem; color:var(--muted); line-height:1.65; }
+    .piece-move { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:.72rem; color:var(--muted); }
     .piece-move strong { color:var(--cream); }
-    /* Nav arrows */
-    .carousel-btn {
-      position:absolute; top:50%; transform:translateY(-50%);
-      width:48px; height:48px; border-radius:50%;
-      background:rgba(20,20,20,.9); border:1px solid var(--border);
-      color:var(--cream); font-size:1.4rem; cursor:pointer; z-index:3;
-      display:flex; align-items:center; justify-content:center;
-      transition:background .2s, border-color .2s, transform .2s;
-      backdrop-filter:blur(8px);
-    }
-    .carousel-btn:hover { background:var(--gold); border-color:var(--gold); color:#000; transform:translateY(-50%) scale(1.1); }
-    .carousel-btn.prev { left:12px; }
-    .carousel-btn.next { right:12px; }
-    /* Progress dots */
-    .carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:28px; }
-    .carousel-dot { width:24px; height:3px; border-radius:2px; background:rgba(255,255,255,.15); cursor:pointer; transition:background .3s, width .3s; }
-    .carousel-dot.active { background:var(--gold); width:36px; }
-    /* Progress bar (Netflix-style auto-advance indicator) */
-    .carousel-progress { height:2px; background:rgba(255,255,255,.08); margin:0 40px; border-radius:2px; overflow:hidden; margin-top:20px; }
-    .carousel-progress-bar { height:100%; width:0%; background:var(--gold); transition:width linear; border-radius:2px; }
 
     /* ═══ BLOG ════════════════════════════════════════════ */
     #blog { background:var(--bg); }
@@ -403,25 +412,54 @@
 
     /* ═══ MOBILE ══════════════════════════════════════════ */
     @media (max-width:860px) {
+      section { padding:72px 20px; }
       nav { padding:16px 20px; }
       .nav-links { display:none; }
-      .about-grid { grid-template-columns:1fr; gap:40px; }
-      .promise-cards { grid-template-columns:1fr; }
+      .nav-hamburger { display:flex; }
+      .about-grid { grid-template-columns:1fr; gap:36px; }
+      .promise-cards { grid-template-columns:1fr 1fr; }
       .how-grid { grid-template-columns:1fr 1fr; }
       .how-grid::after { display:none; }
-      .event-card { grid-template-columns:1fr; padding:36px 28px; }
+      .event-card { grid-template-columns:1fr; padding:32px 24px; }
       .event-card::before { display:none; }
+      .countdown-block { min-width:unset; width:100%; padding:24px 20px; }
+      .countdown { gap:10px; }
+      .cd-num { font-size:2rem; }
       .faq-grid { grid-template-columns:1fr; }
       .gallery-grid { grid-template-columns:1fr 1fr; }
       .gallery-item.tall { grid-row:auto; }
-      .piece-card { flex: 0 0 calc(100% / 1.8); }
-      .blog-grid { grid-template-columns:1fr; }
+      /* Bento grid — 2 cols on tablet */
+      .pieces-bento { grid-template-columns:1fr 1fr; }
+      .piece-card.featured { grid-column:span 2; flex-direction:row; }
+      .blog-grid { grid-template-columns:1fr 1fr; }
       .footer-inner { flex-direction:column; text-align:center; }
       .footer-links { justify-content:center; }
+      .join-inner { padding:52px 24px; }
+      .stats-row { gap:20px; flex-wrap:wrap; }
     }
     @media (max-width:500px) {
+      section { padding:56px 16px; }
+      #hero { padding:100px 16px 72px; }
       .how-grid { grid-template-columns:1fr; }
       .gallery-grid { grid-template-columns:1fr; }
+      /* Bento grid — single column on phones */
+      .pieces-bento { grid-template-columns:1fr; }
+      .piece-card.featured { grid-column:span 1; flex-direction:column; text-align:center; }
+      .piece-card.featured .piece-symbol { margin-bottom:14px; }
+      .piece-card.featured .piece-info { text-align:center; }
+      .blog-grid { grid-template-columns:1fr; }
+      .promise-cards { grid-template-columns:1fr; }
+      .event-card { padding:28px 18px; }
+      .countdown { gap:8px; }
+      .cd-num { font-size:1.7rem; }
+      .cd-sep { font-size:1.6rem; }
+      .contact-row { flex-direction:column; gap:10px; }
+      .hero-btns { flex-direction:column; align-items:stretch; }
+      .hero-btns a { text-align:center; justify-content:center; }
+      .btn-primary, .btn-ghost { padding:13px 24px; font-size:.9rem; }
+      .join-inner { padding:40px 16px; }
+      .stats-row { gap:16px; }
+      .stat .num { font-size:1.6rem; }
     }
   </style>
 </head>
@@ -439,7 +477,21 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="https://chat.whatsapp.com/FR094uKGUvf2VITlWr09YS" target="_blank" class="nav-cta">Join Us</a></li>
   </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Mobile nav drawer -->
+<div class="nav-drawer" id="nav-drawer">
+  <a href="#about" class="nav-drawer-link">About</a>
+  <a href="#gallery" class="nav-drawer-link">Gallery</a>
+  <a href="#chess-pieces" class="nav-drawer-link">Learn Chess</a>
+  <a href="#event" class="nav-drawer-link">Next Meetup</a>
+  <a href="#blog" class="nav-drawer-link">Blog</a>
+  <a href="#faq" class="nav-drawer-link">FAQ</a>
+  <a href="https://chat.whatsapp.com/FR094uKGUvf2VITlWr09YS" target="_blank" class="nav-cta">💬 Join Us</a>
+</div>
 
 <!-- ══════════════════════ HERO ══════════════════════════ -->
 <section id="hero">
@@ -615,75 +667,71 @@
 <!-- ══════════════════════ CHESS PIECES ══════════════════ -->
 <section id="chess-pieces">
   <div class="container">
-    <div class="inner-header">
-      <div>
-        <span class="section-label reveal">Learn Chess</span>
-        <h2 class="reveal" style="font-size:clamp(2rem,4vw,2.8rem);">Meet the pieces.<br/><span class="gold">Know the game.</span></h2>
-      </div>
-      <p class="reveal" style="color:var(--muted); max-width:360px; font-size:.9rem; text-align:right;">All you need to sit down and play. 2 minutes.</p>
+    <div style="text-align:center; margin-bottom:48px;">
+      <span class="section-label reveal">Learn Chess</span>
+      <h2 class="reveal" style="font-size:clamp(2rem,4vw,2.8rem);">Meet the pieces.<br/><span class="gold">Know the game.</span></h2>
+      <p class="reveal" style="color:var(--muted); max-width:480px; margin:14px auto 0; font-size:.9rem;">Everything you need to sit down and play — in 2 minutes.</p>
     </div>
-  </div>
 
-  <div class="carousel-wrapper">
-    <button class="carousel-btn prev" id="pieces-prev">&#8249;</button>
-    <button class="carousel-btn next" id="pieces-next">&#8250;</button>
+    <div class="pieces-bento">
 
-    <div class="carousel-track-outer">
-      <div class="carousel-track" id="pieces-track">
-
-        <div class="piece-card">
-          <span class="piece-symbol">♔</span>
+      <!-- King — featured wide card -->
+      <div class="piece-card featured reveal">
+        <span class="piece-symbol">♔</span>
+        <div class="piece-info">
           <div class="piece-name">King</div>
           <div class="piece-power">The Boss</div>
-          <div class="piece-desc">The most important piece. Protect him at all costs — if he's trapped, the game is over.</div>
+          <div class="piece-desc">The most important piece on the board. Protect him at all costs — if he's trapped, the game is over. Everything revolves around keeping your King safe.</div>
           <div class="piece-move"><strong>Moves:</strong> 1 square in any direction</div>
         </div>
-
-        <div class="piece-card">
-          <span class="piece-symbol">♕</span>
-          <div class="piece-name">Queen</div>
-          <div class="piece-power">The Powerhouse</div>
-          <div class="piece-desc">The most powerful piece on the board. She goes anywhere, any distance. Don't lose her early.</div>
-          <div class="piece-move"><strong>Moves:</strong> Any direction, any number of squares</div>
-        </div>
-
-        <div class="piece-card">
-          <span class="piece-symbol">♖</span>
-          <div class="piece-name">Rook</div>
-          <div class="piece-power">The Tower</div>
-          <div class="piece-desc">Loves open files and the endgame. Two rooks working together are absolutely devastating.</div>
-          <div class="piece-move"><strong>Moves:</strong> Straight lines — horizontal or vertical</div>
-        </div>
-
-        <div class="piece-card">
-          <span class="piece-symbol">♗</span>
-          <div class="piece-name">Bishop</div>
-          <div class="piece-power">The Diagonal</div>
-          <div class="piece-desc">Stays on one colour forever. Give it open diagonals and it becomes a long-range sniper.</div>
-          <div class="piece-move"><strong>Moves:</strong> Diagonally, any number of squares</div>
-        </div>
-
-        <div class="piece-card">
-          <span class="piece-symbol">♘</span>
-          <div class="piece-name">Knight</div>
-          <div class="piece-power">The Trickster</div>
-          <div class="piece-desc">The only piece that jumps over others. Its L-shaped move surprises beginners and experts alike.</div>
-          <div class="piece-move"><strong>Moves:</strong> L-shape — 2 squares + 1 sideways</div>
-        </div>
-
-        <div class="piece-card">
-          <span class="piece-symbol">♙</span>
-          <div class="piece-name">Pawn</div>
-          <div class="piece-power">The Underdog</div>
-          <div class="piece-desc">Weakest piece, biggest dreams. Reach the other end of the board and become a Queen. ♟️</div>
-          <div class="piece-move"><strong>Moves:</strong> 1 square forward, captures diagonally</div>
-        </div>
-
       </div>
-    </div>
 
-    <div class="carousel-dots" id="pieces-dots"></div>
-    <div class="carousel-progress"><div class="carousel-progress-bar" id="pieces-progress"></div></div>
+      <!-- Queen -->
+      <div class="piece-card reveal reveal-delay-1">
+        <span class="piece-symbol">♕</span>
+        <div class="piece-name">Queen</div>
+        <div class="piece-power">The Powerhouse</div>
+        <div class="piece-desc">The most powerful piece. She goes anywhere, any distance. Don't lose her early.</div>
+        <div class="piece-move"><strong>Moves:</strong> Any direction, unlimited squares</div>
+      </div>
+
+      <!-- Rook -->
+      <div class="piece-card reveal reveal-delay-1">
+        <span class="piece-symbol">♖</span>
+        <div class="piece-name">Rook</div>
+        <div class="piece-power">The Tower</div>
+        <div class="piece-desc">Loves open files. Two rooks working together are absolutely devastating in the endgame.</div>
+        <div class="piece-move"><strong>Moves:</strong> Horizontal or vertical, unlimited</div>
+      </div>
+
+      <!-- Bishop -->
+      <div class="piece-card reveal reveal-delay-2">
+        <span class="piece-symbol">♗</span>
+        <div class="piece-name">Bishop</div>
+        <div class="piece-power">The Diagonal</div>
+        <div class="piece-desc">Stays on one colour forever. Open diagonals make it a long-range sniper.</div>
+        <div class="piece-move"><strong>Moves:</strong> Diagonally, unlimited squares</div>
+      </div>
+
+      <!-- Knight -->
+      <div class="piece-card reveal reveal-delay-2">
+        <span class="piece-symbol">♘</span>
+        <div class="piece-name">Knight</div>
+        <div class="piece-power">The Trickster</div>
+        <div class="piece-desc">The only piece that jumps over others. Its L-shape surprises everyone — beginners and experts alike.</div>
+        <div class="piece-move"><strong>Moves:</strong> L-shape — 2 + 1 squares</div>
+      </div>
+
+      <!-- Pawn -->
+      <div class="piece-card reveal reveal-delay-3">
+        <span class="piece-symbol">♙</span>
+        <div class="piece-name">Pawn</div>
+        <div class="piece-power">The Underdog</div>
+        <div class="piece-desc">Weakest piece, biggest dreams. Reach the other end and become a Queen. ♟️</div>
+        <div class="piece-move"><strong>Moves:</strong> 1 forward, captures diagonally</div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -1095,89 +1143,24 @@
   }
   document.getElementById('admin-password').addEventListener('keydown', e => { if(e.key==='Enter') adminLogin(); });
 
+  /* ── Mobile hamburger menu ── */
+  const hamburger = document.getElementById('nav-hamburger');
+  const drawer    = document.getElementById('nav-drawer');
+  hamburger.addEventListener('click', () => {
+    const open = drawer.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  document.querySelectorAll('.nav-drawer-link, .nav-drawer .nav-cta').forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      hamburger.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
   renderBlog();
 
-  /* ── Netflix-style Chess Pieces Carousel ─────────────── */
-  (function() {
-    const track    = document.getElementById('pieces-track');
-    const dotsEl   = document.getElementById('pieces-dots');
-    const progress = document.getElementById('pieces-progress');
-    const cards    = track.querySelectorAll('.piece-card');
-    const total    = cards.length;
-    const visible  = window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
-    const maxIdx   = total - visible;
-    let current    = 0;
-    let autoTimer, progressTimer;
-    const INTERVAL = 5000;
-
-    // Build dots
-    for (let i = 0; i <= maxIdx; i++) {
-      const d = document.createElement('div');
-      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      d.addEventListener('click', () => goTo(i));
-      dotsEl.appendChild(d);
-    }
-
-    function getCardWidth() {
-      return cards[0].offsetWidth + 16; // card + gap
-    }
-
-    function goTo(idx) {
-      current = Math.max(0, Math.min(idx, maxIdx));
-      track.style.transform = `translateX(-${current * getCardWidth()}px)`;
-      dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
-      resetProgress();
-    }
-
-    function next() { goTo(current >= maxIdx ? 0 : current + 1); }
-    function prev() { goTo(current <= 0 ? maxIdx : current - 1); }
-
-    document.getElementById('pieces-next').addEventListener('click', () => { next(); resetAuto(); });
-    document.getElementById('pieces-prev').addEventListener('click', () => { prev(); resetAuto(); });
-
-    // Auto-advance
-    function startProgress() {
-      progress.style.transition = 'none';
-      progress.style.width = '0%';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          progress.style.transition = `width ${INTERVAL}ms linear`;
-          progress.style.width = '100%';
-        });
-      });
-    }
-
-    function startAuto() {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(() => { next(); }, INTERVAL);
-      startProgress();
-    }
-
-    function resetAuto() {
-      clearInterval(autoTimer);
-      startAuto();
-    }
-
-    function resetProgress() { startProgress(); }
-
-    // Pause on hover
-    const wrapper = document.querySelector('.carousel-wrapper');
-    wrapper.addEventListener('mouseenter', () => {
-      clearInterval(autoTimer);
-      progress.style.transition = 'none';
-    });
-    wrapper.addEventListener('mouseleave', () => { startAuto(); });
-
-    // Touch/swipe support
-    let touchX = 0;
-    track.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive:true });
-    track.addEventListener('touchend',   e => {
-      const diff = touchX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); resetAuto(); }
-    });
-
-    startAuto();
-  })();
 </script>
 </body>
 </html>
