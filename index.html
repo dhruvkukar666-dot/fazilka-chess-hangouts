@@ -284,6 +284,74 @@
     .social-link { display:flex; align-items:center; gap:8px; color:var(--muted); text-decoration:none; font-size:.85rem; transition:color .2s; }
     .social-link:hover { color:var(--gold); }
 
+    /* ═══ CHESS PIECES ═══════════════════════════════════ */
+    #chess-pieces { background:var(--bg3); }
+    .pieces-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; }
+    .piece-card {
+      background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+      padding:28px 16px; text-align:center;
+      transition:border-color .3s, transform .3s, background .3s;
+      cursor:default;
+    }
+    .piece-card:hover { border-color:var(--gold); transform:translateY(-6px); background:var(--bg3); }
+    .piece-symbol { font-size:3rem; line-height:1; margin-bottom:12px; display:block; }
+    .piece-name { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--cream); margin-bottom:6px; }
+    .piece-power { font-size:.72rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .piece-desc { font-size:.78rem; color:var(--muted); line-height:1.6; }
+    .piece-move {
+      margin-top:14px; padding-top:14px; border-top:1px solid var(--border);
+      font-size:.72rem; color:var(--muted);
+    }
+    .piece-move strong { color:var(--cream); }
+
+    /* ═══ BLOG ════════════════════════════════════════════ */
+    #blog { background:var(--bg); }
+    .blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .blog-card {
+      background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+      overflow:hidden; transition:border-color .3s, transform .3s;
+    }
+    .blog-card:hover { border-color:var(--gold); transform:translateY(-4px); }
+    .blog-card-body { padding:24px; }
+    .blog-tag { display:inline-block; background:rgba(212,168,83,.12); border:1px solid var(--border); border-radius:50px; padding:3px 12px; font-size:.68rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .blog-title { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:10px; line-height:1.3; }
+    .blog-excerpt { font-size:.83rem; color:var(--muted); line-height:1.6; margin-bottom:16px; }
+    .blog-meta { font-size:.72rem; color:var(--muted); display:flex; align-items:center; gap:12px; }
+    .blog-date { color:var(--gold); }
+    .blog-empty { text-align:center; padding:60px 20px; color:var(--muted); grid-column:1/-1; }
+    .blog-empty .icon { font-size:3rem; margin-bottom:16px; display:block; }
+
+    /* ═══ ADMIN PANEL ═════════════════════════════════════ */
+    #admin-modal {
+      display:none; position:fixed; inset:0; z-index:300;
+      background:rgba(0,0,0,.92); backdrop-filter:blur(10px);
+      align-items:center; justify-content:center;
+    }
+    #admin-modal.active { display:flex; }
+    .admin-box {
+      background:var(--bg2); border:1px solid var(--gold); border-radius:20px;
+      padding:40px; width:90%; max-width:560px; max-height:90vh; overflow-y:auto;
+    }
+    .admin-box h3 { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:24px; color:var(--gold); }
+    .admin-field { margin-bottom:16px; }
+    .admin-field label { display:block; font-size:.78rem; font-weight:600; color:var(--muted); margin-bottom:6px; letter-spacing:.06em; text-transform:uppercase; }
+    .admin-field input, .admin-field textarea, .admin-field select {
+      width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px;
+      padding:10px 14px; color:var(--cream); font-family:'Inter',sans-serif; font-size:.88rem;
+      outline:none; transition:border-color .2s;
+    }
+    .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus { border-color:var(--gold); }
+    .admin-field textarea { min-height:120px; resize:vertical; }
+    .admin-field select option { background:var(--bg3); }
+    .admin-btns { display:flex; gap:12px; margin-top:24px; }
+    .btn-admin { background:var(--gold); color:#000; font-weight:700; font-size:.88rem; padding:10px 24px; border-radius:50px; border:none; cursor:pointer; transition:background .2s; }
+    .btn-admin:hover { background:var(--gold-lt); }
+    .btn-admin-ghost { background:transparent; border:1px solid var(--border); color:var(--muted); font-size:.88rem; padding:10px 24px; border-radius:50px; cursor:pointer; transition:border-color .2s; }
+    .btn-admin-ghost:hover { border-color:var(--gold); color:var(--cream); }
+    .admin-posts-list { margin-top:28px; border-top:1px solid var(--border); padding-top:20px; }
+    .admin-post-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:.85rem; }
+    .admin-post-item .del-btn { background:none; border:none; color:#e05; cursor:pointer; font-size:1rem; }
+
     /* ═══ FOOTER ══════════════════════════════════════════ */
     footer { background:var(--bg); border-top:1px solid var(--border); padding:40px 24px; }
     .footer-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
@@ -307,6 +375,8 @@
       .faq-grid { grid-template-columns:1fr; }
       .gallery-grid { grid-template-columns:1fr 1fr; }
       .gallery-item.tall { grid-row:auto; }
+      .pieces-grid { grid-template-columns:repeat(3,1fr); }
+      .blog-grid { grid-template-columns:1fr; }
       .footer-inner { flex-direction:column; text-align:center; }
       .footer-links { justify-content:center; }
     }
@@ -324,8 +394,9 @@
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#how">How It Works</a></li>
+    <li><a href="#chess-pieces">Learn Chess</a></li>
     <li><a href="#event">Next Meetup</a></li>
+    <li><a href="#blog">Blog</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="https://chat.whatsapp.com/FR094uKGUvf2VITlWr09YS" target="_blank" class="nav-cta">Join Us</a></li>
   </ul>
@@ -371,7 +442,7 @@
         <h2 class="reveal">The most<br/><span class="gold">chill chess spot</span><br/>in Fazilka.</h2>
         <div class="divider reveal"></div>
         <p class="reveal">
-          Founded in June 2026, Fazilka Chess Hangouts is a weekly gathering at local cafés where anyone can show up, grab a coffee, and play a game — or just watch and learn.
+          Founded in June 2026 by <strong>Dhairya Kukar</strong> and <strong>Abhinandan Babbar</strong>, Fazilka Chess Hangouts is a weekly gathering at local cafés where anyone can show up, grab a coffee, and play a game — or just watch and learn.
         </p>
         <p class="reveal">
           We built this because Fazilka deserves a screen-free social space. No competition pressure, no membership fees, no "serious players only" gatekeeping. Just good chess and good conversations.
@@ -502,6 +573,68 @@
   </div>
 </section>
 
+<!-- ══════════════════════ CHESS PIECES ══════════════════ -->
+<section id="chess-pieces">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:56px;">
+      <span class="section-label reveal">Learn Chess</span>
+      <h2 class="reveal" style="font-size:clamp(2rem,4vw,2.8rem);">Meet the pieces.<br/><span class="gold">Know the game.</span></h2>
+      <p class="reveal" style="color:var(--muted); max-width:500px; margin:16px auto 0; font-size:.95rem;">Don't know how the pieces move? You will in 2 minutes. This is all you need to sit down and play.</p>
+    </div>
+    <div class="pieces-grid">
+
+      <div class="piece-card reveal reveal-delay-1">
+        <span class="piece-symbol">♔</span>
+        <div class="piece-name">King</div>
+        <div class="piece-power">The Boss</div>
+        <div class="piece-desc">The most important piece. Protect him at all costs — if he's trapped, you lose.</div>
+        <div class="piece-move"><strong>Moves:</strong> 1 square in any direction</div>
+      </div>
+
+      <div class="piece-card reveal reveal-delay-2">
+        <span class="piece-symbol">♕</span>
+        <div class="piece-name">Queen</div>
+        <div class="piece-power">The Powerhouse</div>
+        <div class="piece-desc">The most powerful piece on the board. She goes anywhere, any distance. Don't lose her early.</div>
+        <div class="piece-move"><strong>Moves:</strong> Any direction, any number of squares</div>
+      </div>
+
+      <div class="piece-card reveal reveal-delay-3">
+        <span class="piece-symbol">♖</span>
+        <div class="piece-name">Rook</div>
+        <div class="piece-power">The Tower</div>
+        <div class="piece-desc">Loves open files and the endgame. Two rooks working together are devastating.</div>
+        <div class="piece-move"><strong>Moves:</strong> Straight lines — horizontal or vertical</div>
+      </div>
+
+      <div class="piece-card reveal reveal-delay-1">
+        <span class="piece-symbol">♗</span>
+        <div class="piece-name">Bishop</div>
+        <div class="piece-power">The Diagonal</div>
+        <div class="piece-desc">Stays on one colour forever. Give it open diagonals and it becomes a long-range sniper.</div>
+        <div class="piece-move"><strong>Moves:</strong> Diagonally, any number of squares</div>
+      </div>
+
+      <div class="piece-card reveal reveal-delay-2">
+        <span class="piece-symbol">♘</span>
+        <div class="piece-name">Knight</div>
+        <div class="piece-power">The Trickster</div>
+        <div class="piece-desc">The only piece that jumps over others. Its L-shaped move confuses beginners and experts alike.</div>
+        <div class="piece-move"><strong>Moves:</strong> L-shape — 2 squares + 1 sideways</div>
+      </div>
+
+      <div class="piece-card reveal reveal-delay-3">
+        <span class="piece-symbol">♙</span>
+        <div class="piece-name">Pawn</div>
+        <div class="piece-power">The Underdog</div>
+        <div class="piece-desc">Weakest piece, biggest dreams. Reach the other end of the board and become a Queen. ♟️</div>
+        <div class="piece-move"><strong>Moves:</strong> 1 square forward, captures diagonally</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ══════════════════════ NEXT EVENT ════════════════════ -->
 <section id="event">
   <div class="container">
@@ -582,6 +715,67 @@
   </div>
 </section>
 
+<!-- ══════════════════════ BLOG ══════════════════════════ -->
+<section id="blog">
+  <div class="container">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:48px; flex-wrap:wrap; gap:16px;">
+      <div>
+        <span class="section-label reveal">Community Blog</span>
+        <h2 class="reveal" style="font-size:clamp(1.8rem,3.5vw,2.6rem);">Stories from<br/><span class="gold">the board.</span></h2>
+      </div>
+    </div>
+    <div class="blog-grid" id="blog-grid">
+      <div class="blog-empty">
+        <span class="icon">♟️</span>
+        <p>First blog post coming soon. Check back after Hangout #2!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Admin Modal -->
+<div id="admin-modal">
+  <div class="admin-box">
+    <h3>♟️ Admin Panel</h3>
+
+    <div id="admin-login-view">
+      <div class="admin-field">
+        <label>Password</label>
+        <input type="password" id="admin-password" placeholder="Enter admin password" />
+      </div>
+      <div class="admin-btns">
+        <button class="btn-admin" onclick="adminLogin()">Login</button>
+        <button class="btn-admin-ghost" onclick="closeAdmin()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="admin-panel-view" style="display:none;">
+      <div class="admin-field">
+        <label>Post Title</label>
+        <input type="text" id="post-title" placeholder="e.g. Recap: Hangout #2 was amazing!" />
+      </div>
+      <div class="admin-field">
+        <label>Category</label>
+        <select id="post-tag">
+          <option value="Recap">Recap</option>
+          <option value="Tip">Chess Tip</option>
+          <option value="Announcement">Announcement</option>
+          <option value="Story">Member Story</option>
+        </select>
+      </div>
+      <div class="admin-field">
+        <label>Content</label>
+        <textarea id="post-content" placeholder="Write your post here..."></textarea>
+      </div>
+      <div class="admin-btns">
+        <button class="btn-admin" onclick="publishPost()">Publish Post</button>
+        <button class="btn-admin-ghost" onclick="closeAdmin()">Close</button>
+      </div>
+      <div class="admin-posts-list" id="admin-posts-list"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════ JOIN CTA ══════════════════════ -->
 <section id="join">
   <div class="container">
@@ -607,13 +801,14 @@
 <footer>
   <div class="footer-inner">
     <div>
-      <div class="footer-logo">♟️ Fazilka Chess Hangouts</div>
+      <div class="footer-logo" id="footer-logo" style="cursor:default;" title="">♟️ Fazilka Chess Hangouts</div>
       <div class="footer-tagline">Good chess, good conversations, good company.</div>
     </div>
     <ul class="footer-links">
       <li><a href="#about">About</a></li>
       <li><a href="#gallery">Gallery</a></li>
-      <li><a href="#event">Next Meetup</a></li>
+      <li><a href="#chess-pieces">Learn Chess</a></li>
+      <li><a href="#blog">Blog</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="https://www.instagram.com/fazilka_chess_hangouts" target="_blank">Instagram</a></li>
       <li><a href="https://chat.whatsapp.com/FR094uKGUvf2VITlWr09YS" target="_blank">WhatsApp</a></li>
@@ -688,10 +883,110 @@
     if (e.target === document.getElementById('lightbox')) closeLightbox();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'Escape') { closeLightbox(); closeAdmin(); }
     if (e.key === 'ArrowLeft')  changeLightbox(-1);
     if (e.key === 'ArrowRight') changeLightbox(1);
   });
+
+  /* ── Blog ───────────────────────────────────────────── */
+  const BLOG_KEY = 'fch_blog_posts';
+  const ADMIN_PW = 'chess2026';
+
+  function getPosts() {
+    try { return JSON.parse(localStorage.getItem(BLOG_KEY)) || []; } catch { return []; }
+  }
+  function savePosts(posts) { localStorage.setItem(BLOG_KEY, JSON.stringify(posts)); }
+
+  function renderBlog() {
+    const posts = getPosts();
+    const grid  = document.getElementById('blog-grid');
+    if (!posts.length) {
+      grid.innerHTML = `<div class="blog-empty"><span class="icon">♟️</span><p>First blog post coming soon. Check back after Hangout #2!</p></div>`;
+      return;
+    }
+    grid.innerHTML = posts.slice().reverse().map((p, i) => `
+      <div class="blog-card reveal">
+        <div class="blog-card-body">
+          <span class="blog-tag">${p.tag}</span>
+          <div class="blog-title">${p.title}</div>
+          <div class="blog-excerpt">${p.content.length > 160 ? p.content.slice(0,160)+'…' : p.content}</div>
+          <div class="blog-meta"><span class="blog-date">📅 ${p.date}</span><span>By Fazilka Chess Hangouts</span></div>
+        </div>
+      </div>
+    `).join('');
+    grid.querySelectorAll('.reveal').forEach(el => { el.classList.add('visible'); });
+  }
+
+  function renderAdminList() {
+    const posts = getPosts();
+    const list  = document.getElementById('admin-posts-list');
+    if (!posts.length) { list.innerHTML = '<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">No posts yet.</p>'; return; }
+    list.innerHTML = '<p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Existing Posts</p>' +
+      posts.slice().reverse().map((p, i) => `
+        <div class="admin-post-item">
+          <span>${p.title}</span>
+          <button class="del-btn" onclick="deletePost(${posts.length-1-i})">🗑</button>
+        </div>
+      `).join('');
+  }
+
+  function publishPost() {
+    const title   = document.getElementById('post-title').value.trim();
+    const content = document.getElementById('post-content').value.trim();
+    const tag     = document.getElementById('post-tag').value;
+    if (!title || !content) { alert('Please fill in title and content.'); return; }
+    const posts = getPosts();
+    posts.push({ title, content, tag, date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) });
+    savePosts(posts);
+    document.getElementById('post-title').value   = '';
+    document.getElementById('post-content').value = '';
+    renderBlog();
+    renderAdminList();
+    alert('✅ Post published!');
+  }
+
+  function deletePost(idx) {
+    if (!confirm('Delete this post?')) return;
+    const posts = getPosts();
+    posts.splice(idx, 1);
+    savePosts(posts);
+    renderBlog();
+    renderAdminList();
+  }
+
+  /* Admin access: click footer logo 3 times */
+  let logoClicks = 0, logoTimer;
+  document.getElementById('footer-logo').addEventListener('click', () => {
+    logoClicks++;
+    clearTimeout(logoTimer);
+    logoTimer = setTimeout(() => { logoClicks = 0; }, 1500);
+    if (logoClicks >= 3) { logoClicks = 0; openAdmin(); }
+  });
+
+  function openAdmin() {
+    document.getElementById('admin-modal').classList.add('active');
+    document.getElementById('admin-login-view').style.display = 'block';
+    document.getElementById('admin-panel-view').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAdmin() {
+    document.getElementById('admin-modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function adminLogin() {
+    const pw = document.getElementById('admin-password').value;
+    if (pw === ADMIN_PW) {
+      document.getElementById('admin-login-view').style.display = 'none';
+      document.getElementById('admin-panel-view').style.display = 'block';
+      renderAdminList();
+    } else {
+      alert('Wrong password.');
+    }
+  }
+  document.getElementById('admin-password').addEventListener('keydown', e => { if(e.key==='Enter') adminLogin(); });
+
+  renderBlog();
 </script>
 </body>
 </html>
