@@ -739,17 +739,27 @@
     <h3>♟️ Admin Panel</h3>
 
     <div id="admin-login-view">
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:20px;">Sign in with your admin email to manage blog posts.</p>
+      <div class="admin-field">
+        <label>Email</label>
+        <input type="email" id="admin-email" placeholder="your@email.com" />
+      </div>
       <div class="admin-field">
         <label>Password</label>
-        <input type="password" id="admin-password" placeholder="Enter admin password" />
+        <input type="password" id="admin-password" placeholder="Password" />
       </div>
+      <div id="admin-error" style="color:#e05;font-size:.8rem;margin-bottom:8px;display:none;"></div>
       <div class="admin-btns">
-        <button class="btn-admin" onclick="adminLogin()">Login</button>
+        <button class="btn-admin" onclick="adminLogin()">Sign In</button>
         <button class="btn-admin-ghost" onclick="closeAdmin()">Cancel</button>
       </div>
     </div>
 
     <div id="admin-panel-view" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+        <span style="font-size:.82rem;color:var(--muted);" id="admin-user-email"></span>
+        <button class="btn-admin-ghost" style="padding:6px 16px;font-size:.78rem;" onclick="adminLogout()">Sign Out</button>
+      </div>
       <div class="admin-field">
         <label>Post Title</label>
         <input type="text" id="post-title" placeholder="e.g. Recap: Hangout #2 was amazing!" />
@@ -817,8 +827,26 @@
   </div>
 </footer>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
 <!-- ══════════════════════ SCRIPTS ════════════════════════ -->
 <script>
+  /* ── Firebase Config (paste yours here after setup) ── */
+  const firebaseConfig = {
+    apiKey:            "PASTE_YOUR_API_KEY",
+    authDomain:        "PASTE_YOUR_AUTH_DOMAIN",
+    projectId:         "PASTE_YOUR_PROJECT_ID",
+    storageBucket:     "PASTE_YOUR_STORAGE_BUCKET",
+    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+    appId:             "PASTE_YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db   = firebase.firestore();
+  const auth = firebase.auth();
+
   /* Sticky nav */
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 40); });
@@ -888,46 +916,56 @@
     if (e.key === 'ArrowRight') changeLightbox(1);
   });
 
-  /* ── Blog ───────────────────────────────────────────── */
-  const BLOG_KEY = 'fch_blog_posts';
-  const ADMIN_PW = 'chess2026';
+  /* ── Blog (Firebase) ────────────────────────────────── */
 
-  function getPosts() {
-    try { return JSON.parse(localStorage.getItem(BLOG_KEY)) || []; } catch { return []; }
-  }
-  function savePosts(posts) { localStorage.setItem(BLOG_KEY, JSON.stringify(posts)); }
-
+  // Real-time blog rendering from Firestore
   function renderBlog() {
-    const posts = getPosts();
-    const grid  = document.getElementById('blog-grid');
-    if (!posts.length) {
-      grid.innerHTML = `<div class="blog-empty"><span class="icon">♟️</span><p>First blog post coming soon. Check back after Hangout #2!</p></div>`;
-      return;
-    }
-    grid.innerHTML = posts.slice().reverse().map((p, i) => `
-      <div class="blog-card reveal">
-        <div class="blog-card-body">
-          <span class="blog-tag">${p.tag}</span>
-          <div class="blog-title">${p.title}</div>
-          <div class="blog-excerpt">${p.content.length > 160 ? p.content.slice(0,160)+'…' : p.content}</div>
-          <div class="blog-meta"><span class="blog-date">📅 ${p.date}</span><span>By Fazilka Chess Hangouts</span></div>
-        </div>
-      </div>
-    `).join('');
-    grid.querySelectorAll('.reveal').forEach(el => { el.classList.add('visible'); });
+    const grid = document.getElementById('blog-grid');
+    grid.innerHTML = `<div class="blog-empty"><span class="icon">⏳</span><p>Loading posts…</p></div>`;
+    db.collection('posts').orderBy('createdAt','desc').onSnapshot(snapshot => {
+      if (snapshot.empty) {
+        grid.innerHTML = `<div class="blog-empty"><span class="icon">♟️</span><p>First blog post coming soon. Check back after Hangout #2!</p></div>`;
+        return;
+      }
+      grid.innerHTML = snapshot.docs.map(doc => {
+        const p = doc.data();
+        const excerpt = (p.content||'').length > 160 ? p.content.slice(0,160)+'…' : p.content;
+        return `
+          <div class="blog-card reveal">
+            <div class="blog-card-body">
+              <span class="blog-tag">${p.tag||'Post'}</span>
+              <div class="blog-title">${p.title}</div>
+              <div class="blog-excerpt">${excerpt}</div>
+              <div class="blog-meta">
+                <span class="blog-date">📅 ${p.date||''}</span>
+                <span>By Fazilka Chess Hangouts</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      grid.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    }, err => {
+      grid.innerHTML = `<div class="blog-empty"><span class="icon">⚠️</span><p>Could not load posts. Check Firebase config.</p></div>`;
+    });
   }
 
+  // Render post list inside admin panel
   function renderAdminList() {
-    const posts = getPosts();
-    const list  = document.getElementById('admin-posts-list');
-    if (!posts.length) { list.innerHTML = '<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">No posts yet.</p>'; return; }
-    list.innerHTML = '<p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Existing Posts</p>' +
-      posts.slice().reverse().map((p, i) => `
-        <div class="admin-post-item">
-          <span>${p.title}</span>
-          <button class="del-btn" onclick="deletePost(${posts.length-1-i})">🗑</button>
-        </div>
-      `).join('');
+    const list = document.getElementById('admin-posts-list');
+    list.innerHTML = '<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">Loading…</p>';
+    db.collection('posts').orderBy('createdAt','desc').get().then(snapshot => {
+      if (snapshot.empty) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:.82rem;margin-top:8px;">No posts yet.</p>';
+        return;
+      }
+      list.innerHTML = '<p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Existing Posts</p>' +
+        snapshot.docs.map(doc => `
+          <div class="admin-post-item">
+            <span>${doc.data().title}</span>
+            <button class="del-btn" onclick="deletePost('${doc.id}')">🗑</button>
+          </div>
+        `).join('');
+    });
   }
 
   function publishPost() {
@@ -935,23 +973,22 @@
     const content = document.getElementById('post-content').value.trim();
     const tag     = document.getElementById('post-tag').value;
     if (!title || !content) { alert('Please fill in title and content.'); return; }
-    const posts = getPosts();
-    posts.push({ title, content, tag, date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) });
-    savePosts(posts);
-    document.getElementById('post-title').value   = '';
-    document.getElementById('post-content').value = '';
-    renderBlog();
-    renderAdminList();
-    alert('✅ Post published!');
+    db.collection('posts').add({
+      title, content, tag,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }),
+      author: auth.currentUser ? auth.currentUser.email : 'Admin'
+    }).then(() => {
+      document.getElementById('post-title').value   = '';
+      document.getElementById('post-content').value = '';
+      renderAdminList();
+      alert('✅ Post published!');
+    }).catch(err => alert('Error: ' + err.message));
   }
 
-  function deletePost(idx) {
+  function deletePost(id) {
     if (!confirm('Delete this post?')) return;
-    const posts = getPosts();
-    posts.splice(idx, 1);
-    savePosts(posts);
-    renderBlog();
-    renderAdminList();
+    db.collection('posts').doc(id).delete().then(() => renderAdminList());
   }
 
   /* Admin access: click footer logo 3 times */
@@ -965,24 +1002,44 @@
 
   function openAdmin() {
     document.getElementById('admin-modal').classList.add('active');
-    document.getElementById('admin-login-view').style.display = 'block';
-    document.getElementById('admin-panel-view').style.display = 'none';
-    document.getElementById('admin-password').value = '';
     document.body.style.overflow = 'hidden';
+    // If already signed in, show panel directly
+    if (auth.currentUser) {
+      showAdminPanel(auth.currentUser);
+    } else {
+      document.getElementById('admin-login-view').style.display  = 'block';
+      document.getElementById('admin-panel-view').style.display  = 'none';
+      document.getElementById('admin-password').value = '';
+      document.getElementById('admin-email').value    = '';
+    }
   }
   function closeAdmin() {
     document.getElementById('admin-modal').classList.remove('active');
     document.body.style.overflow = '';
   }
+  function showAdminPanel(user) {
+    document.getElementById('admin-login-view').style.display  = 'none';
+    document.getElementById('admin-panel-view').style.display  = 'block';
+    document.getElementById('admin-user-email').textContent    = '👤 ' + user.email;
+    renderAdminList();
+  }
   function adminLogin() {
-    const pw = document.getElementById('admin-password').value;
-    if (pw === ADMIN_PW) {
-      document.getElementById('admin-login-view').style.display = 'none';
-      document.getElementById('admin-panel-view').style.display = 'block';
-      renderAdminList();
-    } else {
-      alert('Wrong password.');
-    }
+    const email = document.getElementById('admin-email').value.trim();
+    const pw    = document.getElementById('admin-password').value;
+    const errEl = document.getElementById('admin-error');
+    errEl.style.display = 'none';
+    auth.signInWithEmailAndPassword(email, pw)
+      .then(cred => showAdminPanel(cred.user))
+      .catch(err => {
+        errEl.textContent   = 'Wrong email or password.';
+        errEl.style.display = 'block';
+      });
+  }
+  function adminLogout() {
+    auth.signOut().then(() => {
+      document.getElementById('admin-login-view').style.display = 'block';
+      document.getElementById('admin-panel-view').style.display = 'none';
+    });
   }
   document.getElementById('admin-password').addEventListener('keydown', e => { if(e.key==='Enter') adminLogin(); });
 
